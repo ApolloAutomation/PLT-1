@@ -1,0 +1,336 @@
+substitutions:
+  name: apollo-plt-1
+  version: "24.8.6.2"
+  device_description: ${name} made by Apollo Automation - version ${version}.
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: esp-idf
+
+api:
+  services:
+    - service: play_buzzer
+      variables:
+        song_str: string
+      then:
+        - rtttl.play:
+            rtttl: !lambda 'return song_str;'
+  reboot_timeout: 0s
+
+globals:
+  - id: cycleCounter
+    type: int
+    restore_value: no
+    initial_value: '0'
+  - id: button_press_timestamp
+    restore_value: no
+    type: uint32_t
+    initial_value: '0'
+
+captive_portal:
+
+web_server:
+  port: 80
+
+external_components:
+  - source: github://ApolloAutomation/esphome-battery-component
+    components: [max17048] #Forked OptionZero
+
+i2c:
+  sda: GPIO1
+  scl: GPIO0
+  id: bus_a
+
+one_wire:
+  - platform: gpio
+    pin: GPIO5
+
+# Buzzer
+output:
+  - platform: ledc
+    pin: GPIO10
+    id: buzzer
+rtttl:
+ output: buzzer
+
+
+deep_sleep:
+  id: deep_sleep_1
+  sleep_duration: 8h
+  run_duration: 30s
+
+# TODO: Add moisture minimum to alarm
+# TODO: Add moisture minimum to alert on HA
+
+number:
+  - platform: template
+    name: AHT Temperature Offset
+    id: aht_temperature_offset
+    restore_value: true
+    initial_value: 0.0
+    min_value: -70.0
+    max_value: 70.0
+    entity_category: "CONFIG"
+    unit_of_measurement: "°C"
+    optimistic: true
+    update_interval: never
+    step: 0.1
+    mode: box
+
+  - platform: template
+    name: AHT Humidity Offset
+    id: aht_humidity_offset
+    restore_value: true
+    initial_value: 0
+    min_value: -70.0
+    max_value: 70.0
+    entity_category: "CONFIG"
+    unit_of_measurement: "%"
+    optimistic: true
+    update_interval: never
+    step: 0.1
+    mode: box
+
+  - platform: template
+    name: "Run Duration"
+    id: deep_sleep_run_duration
+    min_value: 1
+    max_value: 800
+    step: 1
+    mode: box
+    update_interval: never
+    optimistic: true
+    restore_value: true
+    initial_value: 30
+    icon: "mdi:arrow-collapse-right"
+    entity_category: CONFIG
+    unit_of_measurement: "s"
+    on_value:
+      then:
+        - lambda: |-
+            id(deep_sleep_1).set_run_duration(x * 1000);
+  
+  - platform: template
+    name: "Sleep Duration"
+    id: deep_sleep_sleep_duration
+    min_value: 1
+    max_value: 800
+    step: 1
+    mode: box
+    update_interval: never
+    optimistic: true
+    restore_value: true
+    initial_value: 8
+    icon: "mdi:arrow-collapse-right"
+    entity_category: CONFIG
+    unit_of_measurement: "h"
+    on_value:
+      then:
+        - lambda: |-
+            id(deep_sleep_1).set_sleep_duration(x * 60 * 60 * 1000);
+
+binary_sensor:
+  - platform: status
+    name: Online
+    id: ink_ha_connected
+  - platform: gpio
+    pin: 
+      number: GPIO9
+      inverted: true
+      mode:
+        input: true
+        pullup: true
+    id: reset_button
+    on_press:
+      then:
+        - lambda: |-
+            id(button_press_timestamp) = millis();    
+    on_release:
+      then:
+        - lambda: |-
+            if (millis() - id(button_press_timestamp) >= 5000) {
+              // Remove Wifi
+              id(factory_reset_switch).turn_on();
+            }
+            else {
+              // StatusCheck
+              id(statusCheck).execute();
+            }
+  - platform: homeassistant
+    name: "OTA Mode"
+    id: ota_mode
+    entity_id: input_boolean.ota_mode
+    on_press:
+      then:
+        - lambda: |- 
+            id(deep_sleep_1).prevent_deep_sleep();
+    on_release:
+      then:
+        - lambda: |- 
+            id(deep_sleep_1).allow_deep_sleep();
+
+sensor:
+  - platform: internal_temperature
+    name: "ESP Temperature"
+    id: sys_esp_temperature
+
+  - platform: uptime
+    name: Uptime
+    id: sys_uptime
+    update_interval: 60s
+
+  - platform: wifi_signal
+    name: RSSI
+    id: wifi_signal_db
+    update_interval: 60s
+    entity_category: "diagnostic"
+
+  - platform: dallas_temp
+    name: "Temperature Probe"
+    update_interval: 5s
+    
+  - platform: aht10
+    variant: AHT20
+    temperature:
+      name: "Board Temperature"
+      filters:
+        - lambda: return x - id(aht_temperature_offset).state;
+    humidity:
+      name: "Board Humidity"
+      filters:
+        - lambda: return x - id(aht_humidity_offset).state;
+    update_interval: 5s
+
+  - platform: max17048
+    battery_voltage:
+      name: Battery voltage
+      id: batt_v
+    battery_level:
+      name: Battery level
+      id: batt_pct
+  - platform: adc
+    pin: GPIO4
+    attenuation: auto
+    name: "Soil Moisture"
+    update_interval: 10s
+    unit_of_measurement: "%"
+    filters:
+    - calibrate_linear:
+        - 1.5 -> 100.00
+        - 2.7 -> 0.00
+    - lambda: |
+        if (x < 0) return 0; 
+        else if (x > 100) return 100;
+        else return (x);
+    accuracy_decimals: 0
+
+  - platform: ltr390
+    id: ltr_390
+    light:
+      name: "LTR390 Light"
+      id: ltr390light
+    uv_index:
+      name: "LTR390 UV Index"
+      id: ltr390uvindex
+
+
+light:
+  - platform: esp32_rmt_led_strip
+    id: rgb_light
+    name: "RGB Light"
+    pin: GPIO3
+    rmt_channel: 0
+    default_transition_length: 0s
+    chipset: WS2812
+    num_leds: 1
+    rgb_order: grb
+    effects:
+      - pulse:
+          name: "Slow Pulse"
+          transition_length: 1000ms
+          update_interval: 1000ms
+          min_brightness: 0%
+          max_brightness: 100%
+      - pulse:
+          name: "Fast Pulse"
+          transition_length: 100ms
+          update_interval: 100ms
+          min_brightness: 50%
+          max_brightness: 100%
+
+button:
+  - platform: restart
+    icon: mdi:power-cycle
+    name: "ESP Reboot"
+
+  - platform: factory_reset
+    disabled_by_default: True
+    name: "Factory Reset ESP"
+    id: factory_reset_all
+
+switch:
+  - platform: factory_reset
+    id: factory_reset_switch
+    internal: true
+  - platform: gpio
+    pin: GPIO7
+    name: "Accessory Power"
+    id: accessory_power
+  - platform: template
+    name: "Alarm Outside Temp Range"
+    id: alarm_outside_temp_range    
+    optimistic: true
+  - platform: template
+    name: "Prevent Sleep"
+    id: prevent_sleep
+    icon: mdi:sleep
+    restore_mode: RESTORE_DEFAULT_ON
+    optimistic: true
+    entity_category: "config"
+    on_turn_on:
+      then:
+        - lambda: |- 
+            id(deep_sleep_1).prevent_deep_sleep();
+    on_turn_off:
+      then:
+        - lambda: |- 
+            id(deep_sleep_1).allow_deep_sleep();
+
+
+script:
+  - id: statusCheck
+    then:
+      - if:
+          condition:
+            - lambda: 'return id(ink_ha_connected).state;'
+          then:
+            - logger.log: "Apollo Automation: Connected To HA"
+            - light.turn_on: 
+                id: rgb_light
+                brightness: 100%
+                red: 0%
+                green: 0%
+                blue: 100%
+          else:
+            - if:
+                condition:
+                  - wifi.connected
+                then:
+                  - logger.log: "Apollo Automation: Connected To Wifi"
+                  - light.turn_on: 
+                      id: rgb_light
+                      brightness: 100%
+                      red: 0%
+                      green: 100%
+                      blue: 0%
+                else:
+                  - logger.log: "Apollo Automation: Not Connected To Wifi"
+                  - light.turn_on: 
+                      id: rgb_light
+                      brightness: 100%
+                      red: 100%
+                      green: 100%
+                      blue: 0%
+      - delay: 5s
+      - light.turn_off: rgb_light
