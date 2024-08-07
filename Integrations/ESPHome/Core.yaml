@@ -1,6 +1,6 @@
 substitutions:
   name: apollo-plt-1
-  version: "24.8.6.2"
+  version: "24.8.7.1"
   device_description: ${name} made by Apollo Automation - version ${version}.
 
 esp32:
@@ -90,6 +90,20 @@ number:
     optimistic: true
     update_interval: never
     step: 0.1
+    mode: box
+
+  - platform: template
+    name: Moisture Alarm Level
+    id: moisture_alarm_level
+    restore_value: true
+    initial_value: 0
+    min_value: 0.0
+    max_value: 100.0
+    entity_category: "CONFIG"
+    unit_of_measurement: "%"
+    optimistic: true
+    update_interval: never
+    step: 1
     mode: box
 
   - platform: template
@@ -187,7 +201,7 @@ sensor:
     entity_category: "diagnostic"
 
   - platform: dallas_temp
-    name: "Temperature Probe"
+    name: "Soil Temperature"
     update_interval: 5s
     
   - platform: aht10
@@ -209,6 +223,11 @@ sensor:
     battery_level:
       name: Battery level
       id: batt_pct
+      filters:
+        - lambda: |
+            if (x > 100) return 100;
+            else return (x);
+
   - platform: adc
     pin: GPIO4
     attenuation: auto
@@ -278,8 +297,8 @@ switch:
     name: "Accessory Power"
     id: accessory_power
   - platform: template
-    name: "Alarm Outside Temp Range"
-    id: alarm_outside_temp_range    
+    name: "Beep Below Moisture Level"
+    id: beep_below_moisture_level    
     optimistic: true
   - platform: template
     name: "Prevent Sleep"

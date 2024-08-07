@@ -1,6 +1,6 @@
 name: Build
 env:
-  DEVICE_NAME: temp-1
+  DEVICE_NAME: plt-1
   RELEASE_URL: ${{ github.server_url }}/${{ github.repository }}/releases/latest
 
 on:
