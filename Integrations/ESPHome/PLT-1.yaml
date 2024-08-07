@@ -1,4 +1,3 @@
-
 esphome:
   name: "${name}"
   friendly_name: Apollo PLT-1

@@ -1,6 +1,6 @@
 substitutions:
   name: apollo-plt-1
-  version: "24.8.6.1"
+  version: "24.8.6.2"
   device_description: ${name} made by Apollo Automation - version ${version}.
 
 esp32:
@@ -213,21 +213,26 @@ sensor:
     pin: GPIO4
     attenuation: auto
     name: "Soil Moisture"
-    update_interval: 600s
+    update_interval: 10s
     unit_of_measurement: "%"
     filters:
-    - median:
-        window_size: 7
-        send_every: 4
-        send_first_at: 1
     - calibrate_linear:
-        - 0.85 -> 0.00
-        - 0.44 -> 100.00
+        - 1.5 -> 100.00
+        - 2.7 -> 0.00
     - lambda: |
         if (x < 0) return 0; 
         else if (x > 100) return 100;
         else return (x);
     accuracy_decimals: 0
+
+  - platform: ltr390
+    id: ltr_390
+    light:
+      name: "LTR390 Light"
+      id: ltr390light
+    uv_index:
+      name: "LTR390 UV Index"
+      id: ltr390uvindex
 
 
 light:
