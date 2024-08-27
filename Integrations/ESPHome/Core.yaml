@@ -1,6 +1,6 @@
 substitutions:
   name: apollo-plt-1
-  version: "24.8.7.2"
+  version: "24.8.26.1"
   device_description: ${name} made by Apollo Automation - version ${version}.
 
 esp32:
@@ -128,7 +128,7 @@ number:
   - platform: template
     name: "Sleep Duration"
     id: deep_sleep_sleep_duration
-    min_value: 1
+    min_value: 0
     max_value: 800
     step: 1
     mode: box
@@ -163,9 +163,15 @@ binary_sensor:
     on_release:
       then:
         - lambda: |-
-            if (millis() - id(button_press_timestamp) >= 5000) {
+            if (millis() - id(button_press_timestamp) >= 10000) {
               // Remove Wifi
               id(factory_reset_switch).turn_on();
+            }
+            else if (millis() - id(button_press_timestamp) >= 3000) {
+              //Turn Prevent Sleep On
+              id(prevent_sleep).turn_on();
+              //Prevent Sleep
+              id(deep_sleep_1).prevent_deep_sleep();
             }
             else {
               // StatusCheck
