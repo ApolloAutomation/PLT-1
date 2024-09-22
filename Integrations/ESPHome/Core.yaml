@@ -17,6 +17,26 @@ api:
         - rtttl.play:
             rtttl: !lambda 'return song_str;'
   reboot_timeout: 0s
+  on_client_connected:
+    then:
+      - delay: 5s
+      - if:
+          condition:
+            or:
+              - binary_sensor.is_on: ota_mode
+              - switch.is_on: prevent_sleep
+          then:
+            - lambda: |- 
+                ESP_LOGW("Apollo", "Preventing Deep Sleep Due To OTA Or Switch");
+                id(deep_sleep_1).prevent_deep_sleep(); 
+          else: 
+            - if:
+                condition:
+                  switch.is_on: sleep_after_connecting
+                then:
+                  - switch.turn_off: accessory_power
+                  - deep_sleep.enter:
+                      id: deep_sleep_1
 
 globals:
   - id: cycleCounter
@@ -57,8 +77,8 @@ rtttl:
 
 deep_sleep:
   id: deep_sleep_1
-  sleep_duration: 8h
-  run_duration: 30s
+  sleep_duration: 12h
+  run_duration: 60s
 
 # TODO: Add moisture minimum to alarm
 # TODO: Add moisture minimum to alert on HA
@@ -185,10 +205,14 @@ binary_sensor:
       then:
         - lambda: |- 
             id(deep_sleep_1).prevent_deep_sleep();
-    on_release:
+    on_release:  
       then:
-        - lambda: |- 
-            id(deep_sleep_1).allow_deep_sleep();
+        - if:
+            condition:
+              switch.is_off: prevent_sleep
+            then:
+              - lambda: |- 
+                  id(deep_sleep_1).allow_deep_sleep();
 
 sensor:
   - platform: internal_temperature
@@ -319,8 +343,18 @@ switch:
             id(deep_sleep_1).prevent_deep_sleep();
     on_turn_off:
       then:
-        - lambda: |- 
-            id(deep_sleep_1).allow_deep_sleep();
+        - if:
+            condition:
+              binary_sensor.is_off: ota_mode
+            then:
+              - lambda: |- 
+                  id(deep_sleep_1).allow_deep_sleep();
+  - platform: template
+    name: "Sleep After Connecting"
+    id: sleep_after_connecting
+    icon: mdi:sleep
+    restore_mode: RESTORE_DEFAULT_ON
+    optimistic: true
 
 
 script:
