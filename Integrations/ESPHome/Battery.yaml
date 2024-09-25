@@ -1,0 +1,22 @@
+external_components:
+  - source: github://ApolloAutomation/esphome-battery-component
+    components: [max17048] #Forked OptionZero
+
+sensor:
+  - platform: max17048
+    battery_voltage:
+      name: Battery voltage
+      id: batt_v
+    battery_level:
+      name: Battery level
+      id: batt_pct
+      filters:
+        - lambda: |
+            if (x > 100) return 100;
+            else return (x);
+
+switch:
+  - platform: gpio
+    pin: GPIO7
+    name: "Accessory Power"
+    id: accessory_power

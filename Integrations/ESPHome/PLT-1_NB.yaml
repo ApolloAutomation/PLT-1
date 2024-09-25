@@ -14,7 +14,6 @@ esphome:
   on_boot:
     priority: 800.0
     then:
-      - switch.turn_on: accessory_power
       - lambda: |-
           id(deep_sleep_1).set_run_duration(id(deep_sleep_run_duration).state * 1000);
           id(deep_sleep_1).set_sleep_duration(id(deep_sleep_sleep_duration).state * 60 * 60 * 1000);
@@ -29,10 +28,11 @@ esphome:
                 id(deep_sleep_1).prevent_deep_sleep(); 
       
   on_shutdown:
+    - light.turn_off: rgb_light
     - switch.turn_off: accessory_power
 
 dashboard_import:
-  package_import_url: github://ApolloAutomation/PLT-1/Integrations/ESPHome/PLT-1.yaml
+  package_import_url: github://ApolloAutomation/PLT-1/Integrations/ESPHome/PLT-1_NB.yaml
   import_full_config: false
 
 improv_serial:
@@ -70,4 +70,3 @@ logger:
 
 packages:
   core: !include Core.yaml
-  battery: !include Battery.yaml

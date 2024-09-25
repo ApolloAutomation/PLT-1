@@ -47,7 +47,29 @@ jobs:
                  --arg version "${{ env.project_version }}" \
                  --arg md5 "$MD5_CHECKSUM" \
                  '{name: $name, version: $version, home_assistant_domain: "esphome", new_install_prompt_erase: false, builds: [{chipFamily: "ESP32-C3", parts: [{path: "apollo-${{ env.DEVICE_NAME }}-esp32c3.factory.bin", offset: 0}], ota: {path: "apollo-${{ env.DEVICE_NAME }}-esp32c3.ota.bin", md5: $md5}}]}' > output/manifest.json
+      
+      - name: Build Non Battery Firmware
+        uses: esphome/build-action@v3.0.0
+        id: esphome-build2
+        with:
+          yaml_file: Integrations/ESPHome/${{ env.UPPERCASE_DEVICE_NAME }}_NB.yaml
+          version: 'latest'
+          cache: true
 
+      - name: Move generated files to output
+        run: |
+          mkdir -p output
+          mv ${{ steps.esphome-build2.outputs.name }}/* output/
+          echo ${{ steps.esphome-build2.outputs.version }} > output/version
+          # Extract MD5 checksum of firmware.ota.bin
+          MD5_CHECKSUM_NB=$(jq -r '.ota.md5' output/manifest_nb.json)
+          echo "MD5_CHECKSUM_NB=$MD5_CHECKSUM_NB" >> $GITHUB_ENV
+
+          # Create new manifest.json with jq
+          jq -n --arg name "${{ env.DEVICE_NAME }}" \
+                 --arg version "${{ env.project_version }}" \
+                 --arg md5 "$MD5_CHECKSUM_NB" \
+                 '{name: $name, version: $version, home_assistant_domain: "esphome", new_install_prompt_erase: false, builds: [{chipFamily: "ESP32-C3", parts: [{path: "apollo-${{ env.DEVICE_NAME }}_nb-esp32c3.factory.bin", offset: 0}], ota: {path: "apollo-${{ env.DEVICE_NAME }}_NB-esp32c3.ota.bin", md5: $md5}}]}' > output/manifest_nb.json
 
       - uses: actions/upload-artifact@v4.3.3
         with:
@@ -105,6 +127,40 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: output/manifest.json
           asset_name: manifest.json
+          asset_content_type: application/octet-stream
+
+
+      - name: Upload NB firmware.factory.bin to Release
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: output/apollo-${{ env.DEVICE_NAME }}_NB-esp32c3.factory.bin
+          asset_name: apollo-${{ env.DEVICE_NAME }}_NB-esp32c3.factory.bin
+          asset_content_type: application/octet-stream
+
+      - name: Upload NB firmware.ota.bin to Release
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: output/apollo-${{ env.DEVICE_NAME }}_NB-esp32c3.ota.bin
+          asset_name: apollo-${{ env.DEVICE_NAME }}_NB-esp32c3.ota.bin
+          asset_content_type: application/octet-stream
+      
+      - name: Upload manifest.json to Release
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: output/manifest_nb.json
+          asset_name: manifest_nb.json
           asset_content_type: application/octet-stream
 
 

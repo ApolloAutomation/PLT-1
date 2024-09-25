@@ -17,6 +17,25 @@ api:
         - rtttl.play:
             rtttl: !lambda 'return song_str;'
   reboot_timeout: 0s
+  on_client_connected:
+    then:
+      - delay: 5s
+      - if:
+          condition:
+            or:
+              - binary_sensor.is_on: ota_mode
+              - switch.is_on: prevent_sleep
+          then:
+            - lambda: |- 
+                ESP_LOGW("Apollo", "Preventing Deep Sleep Due To OTA Or Switch");
+                id(deep_sleep_1).prevent_deep_sleep(); 
+          else: 
+            - if:
+                condition:
+                  switch.is_on: sleep_after_connecting
+                then:
+                  - deep_sleep.enter:
+                      id: deep_sleep_1
 
 globals:
   - id: cycleCounter
@@ -32,10 +51,6 @@ captive_portal:
 
 web_server:
   port: 80
-
-external_components:
-  - source: github://ApolloAutomation/esphome-battery-component
-    components: [max17048] #Forked OptionZero
 
 i2c:
   sda: GPIO1
@@ -222,18 +237,6 @@ sensor:
         - lambda: return x - id(aht_humidity_offset).state;
     update_interval: 5s
 
-  - platform: max17048
-    battery_voltage:
-      name: Battery voltage
-      id: batt_v
-    battery_level:
-      name: Battery level
-      id: batt_pct
-      filters:
-        - lambda: |
-            if (x > 100) return 100;
-            else return (x);
-
   - platform: adc
     pin: GPIO4
     attenuation: auto
@@ -298,10 +301,6 @@ switch:
   - platform: factory_reset
     id: factory_reset_switch
     internal: true
-  - platform: gpio
-    pin: GPIO7
-    name: "Accessory Power"
-    id: accessory_power
   - platform: template
     name: "Beep Below Moisture Level"
     id: beep_below_moisture_level    
