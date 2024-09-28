@@ -1,6 +1,6 @@
 substitutions:
   name: apollo-plt-1
-  version: "24.9.28.1"
+  version: "24.9.28.2"
   device_description: ${name} made by Apollo Automation - version ${version}.
 
 esp32:

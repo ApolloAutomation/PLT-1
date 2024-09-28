@@ -8,6 +8,6 @@ The PLT-1 uses a capacitive soil moisture sensor, which offers much better accur
 
 Links: \
 Discord (Support/feedback/discussion/future products): [http://dsc.gg/ApolloAutomation](http://dsc.gg/ApolloAutomation) \
-Shop: [https://apolloautomation.com](https://apolloautomation.com/products/plt-1) \
+Shop: [https://apolloautomation.com](https://apolloautomation.com/products/plt-1-ultimate-plant-sensor-for-home-assistant) \
 Wiki: [https://wiki.apolloautomation.com](https://wiki.apolloautomation.com/)  \
 3D Files: [https://www.printables.com/model/1021588-apollo-plt-1-ultimate-plant-sensor-for-home-assist](https://www.printables.com/model/1021588-apollo-plt-1-ultimate-plant-sensor-for-home-assist) 
