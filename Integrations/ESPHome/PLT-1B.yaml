@@ -1,0 +1,75 @@
+esphome:
+  name: "${name}"
+  friendly_name: Apollo PLT-1
+  comment: Apollo PLT-1
+  name_add_mac_suffix: true
+  platformio_options:
+    board_build.flash_mode: dio
+
+  project:
+    name: "ApolloAutomation.PLT-1"
+    version: "${version}"
+
+  min_version: 2024.2.0
+  on_boot:
+    priority: 999.0
+    then:
+      - switch.turn_on: accessory_power
+
+      - lambda: |-
+          id(deep_sleep_1).set_run_duration(id(deep_sleep_run_duration).state * 1000);
+          id(deep_sleep_1).set_sleep_duration(id(deep_sleep_sleep_duration).state * 60 * 60 * 1000);
+      - if:
+          condition:
+            or:
+              - binary_sensor.is_on: ota_mode
+              - switch.is_on: prevent_sleep
+          then:
+             - lambda: |- 
+                ESP_LOGW("Apollo", "Preventing Deep Sleep Due To OTA On Boot");
+                id(deep_sleep_1).prevent_deep_sleep(); 
+      
+  on_shutdown:
+    - light.turn_off: rgb_light
+    - switch.turn_off: accessory_power
+
+dashboard_import:
+  package_import_url: github://ApolloAutomation/PLT-1/Integrations/ESPHome/PLT-1B.yaml
+  import_full_config: false
+
+improv_serial:
+
+esp32_improv:
+  authorizer: none
+
+ota:
+  - platform: esphome
+    id: ota_esphome
+  - platform: http_request
+    id: ota_managed
+
+http_request:
+  verify_ssl: true
+
+safe_mode:
+
+update:
+  - platform: http_request
+    id: firmware_update
+    name: Firmware Update
+    source: https://apolloautomation.github.io/PLT-1/artifact/manifest_b.json
+
+wifi:
+  on_connect:
+    - delay: 5s
+    - ble.disable:
+  on_disconnect:
+    - ble.enable:
+  ap:
+    ssid: "Apollo PLT1 Hotspot"
+
+logger:
+
+packages:
+  core: !include Core.yaml
+  battery: !include Battery.yaml

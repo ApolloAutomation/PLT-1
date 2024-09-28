@@ -12,9 +12,8 @@ esphome:
 
   min_version: 2024.2.0
   on_boot:
-    priority: 500
+    priority: 800.0
     then:
-      - switch.turn_on: accessory_power
       - lambda: |-
           id(deep_sleep_1).set_run_duration(id(deep_sleep_run_duration).state * 1000);
           id(deep_sleep_1).set_sleep_duration(id(deep_sleep_sleep_duration).state * 60 * 60 * 1000);
@@ -29,6 +28,7 @@ esphome:
                 id(deep_sleep_1).prevent_deep_sleep(); 
       
   on_shutdown:
+    - light.turn_off: rgb_light
     - switch.turn_off: accessory_power
 
 dashboard_import:
@@ -70,3 +70,5 @@ logger:
 
 packages:
   core: !include Core.yaml
+  battery: !include Battery.yaml
+
