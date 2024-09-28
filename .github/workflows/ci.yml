@@ -12,8 +12,8 @@ jobs:
         file:
           - Integrations/ESPHome/PLT-1.yaml
           - Integrations/ESPHome/PLT-1_BLE.yaml
-          - Integrations/ESPHome/PLT-1_NB_BLE.yaml
-          - Integrations/ESPHome/PLT-1_NB.yaml
+          - Integrations/ESPHome/PLT-1B_BLE.yaml
+          - Integrations/ESPHome/PLT-1B.yaml
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4.1.7

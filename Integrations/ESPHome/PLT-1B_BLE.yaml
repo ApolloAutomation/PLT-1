@@ -12,8 +12,9 @@ esphome:
 
   min_version: 2024.2.0
   on_boot:
-    priority: 800.0
+    priority: 500
     then:
+      - switch.turn_on: accessory_power
       - lambda: |-
           id(deep_sleep_1).set_run_duration(id(deep_sleep_run_duration).state * 1000);
           id(deep_sleep_1).set_sleep_duration(id(deep_sleep_sleep_duration).state * 60 * 60 * 1000);
@@ -32,37 +33,21 @@ esphome:
     - switch.turn_off: accessory_power
 
 dashboard_import:
-  package_import_url: github://ApolloAutomation/PLT-1/Integrations/ESPHome/PLT-1_NB.yaml
+  package_import_url: github://ApolloAutomation/PLT-1/Integrations/ESPHome/PLT-1_BLE.yaml
   import_full_config: false
-
-improv_serial:
-
-esp32_improv:
-  authorizer: none
+  
 
 ota:
   - platform: esphome
     id: ota_esphome
-  - platform: http_request
-    id: ota_managed
-
-http_request:
-  verify_ssl: true
 
 safe_mode:
 
-update:
-  - platform: http_request
-    id: firmware_update
-    name: Firmware Update
-    source: https://apolloautomation.github.io/PLT-1/artifact/manifest.json
+bluetooth_proxy:
+  active: true
+
 
 wifi:
-  on_connect:
-    - delay: 5s
-    - ble.disable:
-  on_disconnect:
-    - ble.enable:
   ap:
     ssid: "Apollo PLT1 Hotspot"
 
