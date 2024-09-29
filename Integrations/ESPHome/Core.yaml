@@ -69,10 +69,6 @@ output:
 rtttl:
  output: buzzer
 
-
-
-
-
 number:
   - platform: template
     name: Air Temperature Offset
