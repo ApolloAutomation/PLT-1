@@ -3,17 +3,27 @@ name: CI
 on:
   pull_request:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   ci:
     name: Building ${{ matrix.file }}
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
+      max-parallel: 3
       matrix:
         file:
           - Integrations/ESPHome/PLT-1.yaml
           - Integrations/ESPHome/PLT-1_BLE.yaml
           - Integrations/ESPHome/PLT-1B_BLE.yaml
           - Integrations/ESPHome/PLT-1B.yaml
+        esphome-version:
+          - stable
+          - beta
+          - dev
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4.1.7

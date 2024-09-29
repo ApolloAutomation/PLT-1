@@ -29,7 +29,6 @@ esphome:
       
   on_shutdown:
     - light.turn_off: rgb_light
-    - switch.turn_off: accessory_power
 
 dashboard_import:
   package_import_url: github://ApolloAutomation/PLT-1/Integrations/ESPHome/PLT-1.yaml
@@ -55,7 +54,7 @@ update:
   - platform: http_request
     id: firmware_update
     name: Firmware Update
-    source: https://apolloautomation.github.io/PLT-1/artifact/manifest.json
+    source: https://apolloautomation.github.io/PLT-1/firmware/manifest.json
 
 wifi:
   on_connect:
@@ -70,5 +69,5 @@ logger:
 
 packages:
   core: !include Core.yaml
-  battery: !include Battery.yaml
+  battery: !include NonBattery.yaml
 
