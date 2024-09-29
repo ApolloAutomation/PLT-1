@@ -69,5 +69,5 @@ logger:
 
 packages:
   core: !include Core.yaml
-  battery: !include NonBattery.yaml
+  nonbattery: !include NonBattery.yaml
 

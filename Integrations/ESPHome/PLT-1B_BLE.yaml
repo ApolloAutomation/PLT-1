@@ -33,7 +33,7 @@ esphome:
     - switch.turn_off: accessory_power
 
 dashboard_import:
-  package_import_url: github://ApolloAutomation/PLT-1/Integrations/ESPHome/PLT-1_BLE.yaml
+  package_import_url: github://ApolloAutomation/PLT-1/Integrations/ESPHome/PLT-1B_BLE.yaml
   import_full_config: false
   
 
@@ -55,3 +55,4 @@ logger:
 
 packages:
   core: !include Core.yaml
+  battery: !include Battery.yaml
