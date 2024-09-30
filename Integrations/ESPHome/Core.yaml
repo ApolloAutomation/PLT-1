@@ -340,3 +340,6 @@ script:
           blue: 100%
       - delay: 1s
       - light.turn_off: rgb_light
+
+
+## TODO: Add function to update all sensor values, call on wake up then sleep with the "Sleep After Connecting"
