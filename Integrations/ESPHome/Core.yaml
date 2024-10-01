@@ -47,14 +47,7 @@ globals:
     restore_value: no
     type: uint32_t
     initial_value: '0'
-  - id: moisture_calibration_low
-    type: float
-    initial_value: '1.5'
-    restore_value: true
-  - id: moisture_calibration_high
-    type: float
-    initial_value: '2.7'
-    restore_value: true
+
 
 captive_portal:
 
@@ -105,6 +98,30 @@ number:
     update_interval: never
     step: 0.1
     mode: box
+  - platform: template
+    id: moisture_calibration_low
+    name: Soil Moisture Calibration Low
+    initial_value: '1.5'
+    optimistic: true
+    update_interval: never
+    step: 0.1
+    mode: box
+    restore_value: true
+    entity_category: "CONFIG"
+    min_value: 0.0
+    max_value: 5.0
+  - platform: template
+    id: moisture_calibration_high
+    name: Soil Moisture Calibration High
+    initial_value: '2.7'
+    restore_value: true
+    entity_category: "CONFIG"
+    optimistic: true
+    update_interval: never
+    step: 0.1
+    mode: box
+    min_value: 0.0
+    max_value: 5.0
 
 binary_sensor:
   - platform: status
@@ -211,17 +228,18 @@ sensor:
     icon: mdi:water
     lambda: |-
       // Get global calibration values
-      float low = id(moisture_calibration_low);
-      float high = id(moisture_calibration_high);
+      float low = id(moisture_calibration_low).state;
+      float high = id(moisture_calibration_high).state;
       float x = id(soil_adc).state;
 
       // Perform linear calibration manually
       float calibrated_value = 100.0 * (x - low) / (high - low);
       
       // Bound the result between 0 and 100
-      if (calibrated_value < 0) return 0;
-      else if (calibrated_value > 100) return 100;
-      else return calibrated_value;
+      //if (calibrated_value < 0) return 0;
+      //else if (calibrated_value > 100) return 100;
+      //else return calibrated_value;
+      return calibrated_value;
     accuracy_decimals: 0
 
   - platform: ltr390
