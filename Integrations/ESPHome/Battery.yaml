@@ -9,6 +9,7 @@ deep_sleep:
 
 sensor:
   - platform: max17048
+    id: max_17048
     battery_voltage:
       name: Battery voltage
       id: batt_v
@@ -25,7 +26,6 @@ switch:
     pin: GPIO7
     name: "Accessory Power"
     id: accessory_power
-
 
 number:
   - platform: template
@@ -65,3 +65,16 @@ number:
       then:
         - lambda: |-
             id(deep_sleep_1).set_sleep_duration(x * 60 * 60 * 1000);
+
+script:
+  - id: reportAllValues
+    then:
+      - component.update: soil_temperature
+      - component.update: soil_moisture
+      - component.update: aht_20
+      - component.update: ltr_390
+      - component.update: wifi_signal_db
+      - component.update: sys_esp_temperature
+      - component.update: sys_uptime
+      - component.update: soil_adc
+      - component.update: max_17048
