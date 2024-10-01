@@ -1,0 +1,56 @@
+esphome:
+  name: "${name}"
+  friendly_name: Apollo PLT-1
+  comment: Apollo PLT-1
+  name_add_mac_suffix: true
+  platformio_options:
+    board_build.flash_mode: dio
+
+  project:
+    name: "ApolloAutomation.PLT-1"
+    version: "${version}"
+
+  min_version: 2024.2.0
+  on_boot:
+    priority: 500
+    then:
+      - lambda: |-
+          id(deep_sleep_1).set_run_duration(id(deep_sleep_run_duration).state * 1000);
+          id(deep_sleep_1).set_sleep_duration(id(deep_sleep_sleep_duration).state * 60 * 60 * 1000);
+      - if:
+          condition:
+            or:
+              - binary_sensor.is_on: ota_mode
+              - switch.is_on: prevent_sleep
+          then:
+             - lambda: |- 
+                ESP_LOGW("Apollo", "Preventing Deep Sleep Due To OTA On Boot");
+                id(deep_sleep_1).prevent_deep_sleep(); 
+      
+  on_shutdown:
+    - light.turn_off: rgb_light
+
+dashboard_import:
+  package_import_url: github://ApolloAutomation/PLT-1/Integrations/ESPHome/PLT-1_BLE.yaml
+  import_full_config: false
+  
+
+ota:
+  - platform: esphome
+    id: ota_esphome
+
+safe_mode:
+
+bluetooth_proxy:
+  active: true
+
+
+wifi:
+  ap:
+    ssid: "Apollo PLT1 Hotspot"
+
+logger:
+
+packages:
+  core: !include Core.yaml
+  nonbattery: !include NonBattery.yaml

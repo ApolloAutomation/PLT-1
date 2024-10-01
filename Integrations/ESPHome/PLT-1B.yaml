@@ -57,7 +57,7 @@ update:
   - platform: http_request
     id: firmware_update
     name: Firmware Update
-    source: https://apolloautomation.github.io/PLT-1/artifact/manifest_b.json
+    source: https://apolloautomation.github.io/PLT-1/firmware-b/manifest.json
 
 wifi:
   on_connect:

@@ -2,7 +2,7 @@
 
 ![Apollo PLT1](PLT_Card.png)
 
-The PLT-1 is a indoor plant multisensor that measures soil moisture, air temperature, humidity, LUX, and UV. It also features an onboard piezo buzzer and addressable RGB LED. Soil temperature can be measured using the optional temperature probe add-on. The sensor comes in battery (B) and non-battery versions, with the non battery version being significantly smaller. 
+The PLT-1 is a indoor plant multisensor that measures soil moisture, air temperature, humidity, LUX, and UV. It also features an onboard piezo buzzer and addressable RGB LED. Soil temperature can be measured using the optional temperature probe add-on. The sensor comes in battery (B) and non-battery versions, with the non battery version being significantly smaller.
 
 The PLT-1 uses a capacitive soil moisture sensor, which offers much better accuracy and durability compared to resistive sensors. Additionally, the ground contact portion is protected with a conformal coating, ensuring longevity and resistance to environmental factors.
 
