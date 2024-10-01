@@ -100,7 +100,7 @@ number:
     mode: box
   - platform: template
     id: moisture_calibration_low
-    name: Soil Moisture Calibration Low
+    name: 100% Water Voltage
     initial_value: '1.5'
     optimistic: true
     update_interval: never
@@ -112,7 +112,7 @@ number:
     max_value: 5.0
   - platform: template
     id: moisture_calibration_high
-    name: Soil Moisture Calibration High
+    name: Dry Voltage
     initial_value: '2.7'
     restore_value: true
     entity_category: "CONFIG"
@@ -233,13 +233,12 @@ sensor:
       float x = id(soil_adc).state;
 
       // Perform linear calibration manually
-      float calibrated_value = 100.0 * (x - low) / (high - low);
+      float calibrated_value = ((100 - 0)/(high - low)) * x + (100 - (((100 - 0)/(high - low)) * high));
       
       // Bound the result between 0 and 100
-      //if (calibrated_value < 0) return 0;
-      //else if (calibrated_value > 100) return 100;
-      //else return calibrated_value;
-      return calibrated_value;
+      if (calibrated_value < 0) return 0;
+      else if (calibrated_value > 100) return 100;
+      else return calibrated_value;
     accuracy_decimals: 0
 
   - platform: ltr390
