@@ -1,6 +1,6 @@
 substitutions:
   name: apollo-plt-1
-  version: "24.9.28.3"
+  version: "24.10.1.1"
   device_description: ${name} made by Apollo Automation - version ${version}.
 
 esp32:
@@ -19,7 +19,6 @@ api:
   reboot_timeout: 0s
   on_client_connected:
     then:
-      - delay: 5s
       - if:
           condition:
             or:
@@ -34,6 +33,8 @@ api:
                 condition:
                   switch.is_on: sleep_after_connecting
                 then:
+                  - lambda: |-
+                      id(reportAllValues).execute();
                   - deep_sleep.enter:
                       id: deep_sleep_1
 
@@ -46,6 +47,7 @@ globals:
     restore_value: no
     type: uint32_t
     initial_value: '0'
+
 
 captive_portal:
 
@@ -61,7 +63,6 @@ one_wire:
   - platform: gpio
     pin: GPIO5
 
-# Buzzer
 output:
   - platform: ledc
     pin: GPIO10
@@ -97,6 +98,30 @@ number:
     update_interval: never
     step: 0.1
     mode: box
+  - platform: template
+    id: moisture_calibration_low
+    name: 100% Water Voltage
+    initial_value: '1.5'
+    optimistic: true
+    update_interval: never
+    step: 0.1
+    mode: box
+    restore_value: true
+    entity_category: "CONFIG"
+    min_value: 0.0
+    max_value: 5.0
+  - platform: template
+    id: moisture_calibration_high
+    name: Dry Voltage
+    initial_value: '2.7'
+    restore_value: true
+    entity_category: "CONFIG"
+    optimistic: true
+    update_interval: never
+    step: 0.1
+    mode: box
+    min_value: 0.0
+    max_value: 5.0
 
 binary_sensor:
   - platform: status
@@ -186,21 +211,34 @@ sensor:
 
   - platform: adc
     pin: GPIO4
-    id: soil_moisture
+    id: soil_adc
     attenuation: auto
+    name: "Soil ADC"
+    update_interval: 5s
+    accuracy_decimals: 0
+    entity_category: "diagnostic"
+    disabled_by_default: true
+
+  - platform: template
     name: "Soil Moisture"
     update_interval: 60s
+    id: soil_moisture
     unit_of_measurement: "%"
     device_class: moisture
     icon: mdi:water
-    filters:
-    - calibrate_linear:
-        - 1.5 -> 100.00
-        - 2.7 -> 0.00
-    - lambda: |
-        if (x < 0) return 0; 
-        else if (x > 100) return 100;
-        else return (x);
+    lambda: |-
+      // Get global calibration values
+      float low = id(moisture_calibration_low).state;
+      float high = id(moisture_calibration_high).state;
+      float x = id(soil_adc).state;
+
+      // Perform linear calibration manually
+      float calibrated_value = ((100 - 0)/(high - low)) * x + (100 - (((100 - 0)/(high - low)) * high));
+      
+      // Bound the result between 0 and 100
+      if (calibrated_value < 0) return 0;
+      else if (calibrated_value > 100) return 100;
+      else return calibrated_value;
     accuracy_decimals: 0
 
   - platform: ltr390
@@ -342,4 +380,5 @@ script:
       - light.turn_off: rgb_light
 
 
-## TODO: Add function to update all sensor values, call on wake up then sleep with the "Sleep After Connecting"
+
+

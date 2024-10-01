@@ -41,3 +41,15 @@ number:
       then:
         - lambda: |-
             id(deep_sleep_1).set_sleep_duration(x * 60 * 1000);
+
+script:
+  - id: reportAllValues
+    then:
+      - component.update: soil_temperature
+      - component.update: soil_moisture
+      - component.update: aht_20
+      - component.update: ltr_390
+      - component.update: wifi_signal_db
+      - component.update: sys_esp_temperature
+      - component.update: sys_uptime
+      - component.update: soil_adc
