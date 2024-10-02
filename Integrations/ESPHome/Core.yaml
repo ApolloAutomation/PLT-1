@@ -1,6 +1,6 @@
 substitutions:
   name: apollo-plt-1
-  version: "24.10.1.1"
+  version: "24.10.2.1"
   device_description: ${name} made by Apollo Automation - version ${version}.
 
 esp32:
@@ -99,7 +99,7 @@ number:
     step: 0.1
     mode: box
   - platform: template
-    id: moisture_calibration_low
+    id: wet_voltage
     name: 100% Water Voltage
     initial_value: '1.5'
     optimistic: true
@@ -111,7 +111,7 @@ number:
     min_value: 0.0
     max_value: 5.0
   - platform: template
-    id: moisture_calibration_high
+    id: dry_voltage
     name: Dry Voltage
     initial_value: '2.7'
     restore_value: true
@@ -215,7 +215,7 @@ sensor:
     attenuation: auto
     name: "Soil ADC"
     update_interval: 5s
-    accuracy_decimals: 0
+    accuracy_decimals: 2
     entity_category: "diagnostic"
     disabled_by_default: true
 
@@ -228,8 +228,8 @@ sensor:
     icon: mdi:water
     lambda: |-
       // Get global calibration values
-      float low = id(moisture_calibration_low).state;
-      float high = id(moisture_calibration_high).state;
+      float high = id(wet_voltage).state;
+      float low = id(dry_voltage).state;
       float x = id(soil_adc).state;
 
       // Perform linear calibration manually
