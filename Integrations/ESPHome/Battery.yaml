@@ -26,6 +26,7 @@ switch:
     pin: GPIO7
     name: "Accessory Power"
     id: accessory_power
+    restore_mode: ALWAYS_ON
 
 number:
   - platform: template
