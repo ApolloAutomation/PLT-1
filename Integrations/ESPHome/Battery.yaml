@@ -27,6 +27,7 @@ switch:
     name: "Accessory Power"
     id: accessory_power
     restore_mode: ALWAYS_ON
+    setup_priority: 1100
 
 number:
   - platform: template
