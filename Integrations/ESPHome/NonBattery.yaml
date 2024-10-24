@@ -7,7 +7,7 @@ number:
   - platform: template
     name: "Run Duration"
     id: deep_sleep_run_duration
-    min_value: 1
+    min_value: 20
     max_value: 800
     step: 1
     mode: box
@@ -26,7 +26,7 @@ number:
   - platform: template
     name: "Sleep Duration"
     id: deep_sleep_sleep_duration
-    min_value: 0
+    min_value: 1
     max_value: 800
     step: 1
     mode: box
