@@ -26,7 +26,8 @@ switch:
     pin: GPIO7
     name: "Accessory Power"
     id: accessory_power
-
+    restore_mode: ALWAYS_ON
+    setup_priority: 1100
 number:
   - platform: template
     name: "Run Duration"
