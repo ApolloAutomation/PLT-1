@@ -4,8 +4,8 @@ external_components:
 
 deep_sleep:
   id: deep_sleep_1
-  sleep_duration: 8h
-  run_duration: 30s
+  sleep_duration: 12h
+  run_duration: 60s
 
 sensor:
   - platform: max17048
@@ -32,7 +32,7 @@ number:
   - platform: template
     name: "Run Duration"
     id: deep_sleep_run_duration
-    min_value: 1
+    min_value: 20
     max_value: 800
     step: 1
     mode: box
@@ -58,7 +58,7 @@ number:
     update_interval: never
     optimistic: true
     restore_value: true
-    initial_value: 8
+    initial_value: 12
     icon: "mdi:arrow-collapse-right"
     entity_category: CONFIG
     unit_of_measurement: "h"
