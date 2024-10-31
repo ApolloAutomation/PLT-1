@@ -1,6 +1,6 @@
 substitutions:
   name: apollo-plt-1
-  version: "24.10.25.1"
+  version: "24.10.31.1"
   device_description: ${name} made by Apollo Automation - version ${version}.
 
 esp32:
@@ -168,6 +168,7 @@ binary_sensor:
               id(runTest) = true;
               id(deep_sleep_run_duration).publish_state(60);
               id(deep_sleep_sleep_duration).publish_state(60);
+              id(prevent_sleep).turn_on();
               id(factory_reset_switch).turn_on();
             }
             else if (millis() - id(button_press_timestamp) >= 3000) {
