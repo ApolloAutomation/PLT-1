@@ -231,12 +231,12 @@ sensor:
       name: "Air Temperature"
       id: aht_temperature
       filters:
-        - lambda: return x - id(aht_temperature_offset).state;
+        - lambda: return x + id(aht_temperature_offset).state;
     humidity:
       name: "Air Humidity"
       id: aht_humidity
       filters:
-        - lambda: return x - id(aht_humidity_offset).state;
+        - lambda: return x + id(aht_humidity_offset).state;
     update_interval: 60s
 
   - platform: adc
