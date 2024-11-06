@@ -1,13 +1,13 @@
 esphome:
-  name: "${name}"
-  friendly_name: Apollo PLT-1
-  comment: Apollo PLT-1
+  name: "apollo-plt-1b"
+  friendly_name: Apollo PLT-1B
+  comment: Apollo PLT-1B
   name_add_mac_suffix: true
   platformio_options:
     board_build.flash_mode: dio
 
   project:
-    name: "ApolloAutomation.PLT-1"
+    name: "ApolloAutomation.PLT-1BBLE"
     version: "${version}"
 
   min_version: 2024.2.0
@@ -49,7 +49,7 @@ bluetooth_proxy:
 
 wifi:
   ap:
-    ssid: "Apollo PLT1 Hotspot"
+    ssid: "Apollo PLT1B Hotspot"
 
 logger:
 

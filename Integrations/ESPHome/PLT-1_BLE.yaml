@@ -7,7 +7,7 @@ esphome:
     board_build.flash_mode: dio
 
   project:
-    name: "ApolloAutomation.PLT-1"
+    name: "ApolloAutomation.PLT-1BLE"
     version: "${version}"
 
   min_version: 2024.2.0
