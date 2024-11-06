@@ -1,7 +1,7 @@
 esphome:
-  name: "apollo-plt-1b"
-  friendly_name: Apollo PLT-1B
-  comment: Apollo PLT-1B
+  name: "apollo-plt-1bble"
+  friendly_name: Apollo PLT-1BBLE
+  comment: Apollo PLT-1BBLE
   name_add_mac_suffix: true
   platformio_options:
     board_build.flash_mode: dio
