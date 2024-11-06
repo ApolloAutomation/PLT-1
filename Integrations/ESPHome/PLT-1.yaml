@@ -1,5 +1,5 @@
 esphome:
-  name: "${name}"
+  name: "apollo-plt-1"
   friendly_name: Apollo PLT-1
   comment: Apollo PLT-1
   name_add_mac_suffix: true
