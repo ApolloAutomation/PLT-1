@@ -1,5 +1,5 @@
 substitutions:
-  version: "24.11.6.1"
+  version: "24.11.9.1"
 
 esp32:
   board: esp32-c3-devkitm-1
@@ -26,15 +26,11 @@ api:
             - lambda: |- 
                 ESP_LOGW("Apollo", "Preventing Deep Sleep Due To OTA Or Switch");
                 id(deep_sleep_1).prevent_deep_sleep(); 
-          else: 
-            - if:
-                condition:
-                  switch.is_on: sleep_after_connecting
-                then:
-                  - lambda: |-
-                      id(reportAllValues).execute();
-                  - deep_sleep.enter:
-                      id: deep_sleep_1
+          else:
+            - lambda: |-
+                id(reportAllValues).execute();
+            - deep_sleep.enter:
+                id: deep_sleep_1
 
 globals:
   - id: cycleCounter
@@ -164,8 +160,6 @@ binary_sensor:
               // Remove Wifi
               id(testCycleCount) = 0;
               id(runTest) = true;
-              id(deep_sleep_run_duration).publish_state(60);
-              id(deep_sleep_sleep_duration).publish_state(60);
               id(prevent_sleep).turn_on();
               id(factory_reset_switch).turn_on();
             }
@@ -337,13 +331,6 @@ switch:
             then:
               - lambda: |- 
                   id(deep_sleep_1).allow_deep_sleep();
-  - platform: template
-    name: "Sleep After Connecting"
-    id: sleep_after_connecting
-    icon: mdi:sleep
-    restore_mode: RESTORE_DEFAULT_ON
-    optimistic: true
-    entity_category: "config"
 
 script:
   - id: statusCheck

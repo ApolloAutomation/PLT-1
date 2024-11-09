@@ -5,7 +5,7 @@ external_components:
 deep_sleep:
   id: deep_sleep_1
   sleep_duration: 12h
-  run_duration: 60s
+  run_duration: 90s
 
 sensor:
   - platform: max17048
@@ -28,25 +28,8 @@ switch:
     id: accessory_power
     restore_mode: ALWAYS_ON
     setup_priority: 1100
-number:
-  - platform: template
-    name: "Run Duration"
-    id: deep_sleep_run_duration
-    min_value: 20
-    max_value: 800
-    step: 1
-    mode: box
-    update_interval: never
-    optimistic: true
-    restore_value: true
-    initial_value: 60
-    icon: "mdi:arrow-collapse-right"
     entity_category: CONFIG
-    unit_of_measurement: "s"
-    on_value:
-      then:
-        - lambda: |-
-            id(deep_sleep_1).set_run_duration(x * 1000);
+number:
   
   - platform: template
     name: "Sleep Duration"
