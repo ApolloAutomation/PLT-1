@@ -1,28 +1,9 @@
 deep_sleep:
   id: deep_sleep_1
   sleep_duration: 5min
-  run_duration: 1min
+  run_duration: 90s
 
 number:
-  - platform: template
-    name: "Run Duration"
-    id: deep_sleep_run_duration
-    min_value: 20
-    max_value: 800
-    step: 1
-    mode: box
-    update_interval: never
-    optimistic: true
-    restore_value: true
-    initial_value: 60
-    icon: "mdi:arrow-collapse-right"
-    entity_category: CONFIG
-    unit_of_measurement: "s"
-    on_value:
-      then:
-        - lambda: |-
-            id(deep_sleep_1).set_run_duration(x * 1000);
-  
   - platform: template
     name: "Sleep Duration"
     id: deep_sleep_sleep_duration
