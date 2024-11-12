@@ -1,5 +1,5 @@
 substitutions:
-  version: "24.11.9.1"
+  version: "24.11.11.1"
 
 esp32:
   board: esp32-c3-devkitm-1
@@ -29,8 +29,6 @@ api:
           else:
             - lambda: |-
                 id(reportAllValues).execute();
-            - deep_sleep.enter:
-                id: deep_sleep_1
 
 globals:
   - id: cycleCounter
