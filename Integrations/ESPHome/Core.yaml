@@ -1,5 +1,5 @@
 substitutions:
-  version: "24.11.9.1"
+  version: "24.11.11.1"
 
 esp32:
   board: esp32-c3-devkitm-1
@@ -17,6 +17,7 @@ api:
   reboot_timeout: 0s
   on_client_connected:
     then:
+      - delay: 5s
       - if:
           condition:
             or:
@@ -27,8 +28,10 @@ api:
                 ESP_LOGW("Apollo", "Preventing Deep Sleep Due To OTA Or Switch");
                 id(deep_sleep_1).prevent_deep_sleep(); 
           else:
+            - delay: 10s
             - lambda: |-
                 id(reportAllValues).execute();
+            - delay: 5s
             - deep_sleep.enter:
                 id: deep_sleep_1
 
