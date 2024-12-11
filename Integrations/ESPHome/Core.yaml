@@ -1,5 +1,5 @@
 substitutions:
-  version: "24.11.11.1"
+  version: "24.12.7.1"
 
 esp32:
   board: esp32-c3-devkitm-1
@@ -75,6 +75,7 @@ i2c:
   sda: GPIO1
   scl: GPIO0
   id: bus_a
+  frequency: 200kHz
 
 one_wire:
   - platform: gpio
