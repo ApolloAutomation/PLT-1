@@ -1,13 +1,13 @@
 esphome:
-  name: "apollo-plt-1"
-  friendly_name: Apollo PLT-1
-  comment: Apollo PLT-1
+  name: "apollo-plt-1-minimal"
+  friendly_name: Apollo PLT-1 Minimal
+  comment: Apollo PLT-1 Minimal
   name_add_mac_suffix: true
   platformio_options:
     board_build.flash_mode: dio
 
   project:
-    name: "ApolloAutomation.PLT-1"
+    name: "ApolloAutomation.PLT-1_Minimal"
     version: "${version}"
 
   min_version: 2024.2.0
@@ -43,35 +43,14 @@ dashboard_import:
 
 improv_serial:
 
-esp32_improv:
-  authorizer: none
+ota:
+  - platform: esphome
+    id: ota_esphome
 
 web_server:
   port: 80
 
-ota:
-  - platform: esphome
-    id: ota_esphome
-  - platform: http_request
-    id: ota_managed
-
-http_request:
-  verify_ssl: true
-
-safe_mode:
-
-update:
-  - platform: http_request
-    id: firmware_update
-    name: Firmware Update
-    source: https://apolloautomation.github.io/PLT-1/firmware/manifest.json
-
 wifi:
-  on_connect:
-    - delay: 5s
-    - ble.disable:
-  on_disconnect:
-    - ble.enable:
   ap:
     ssid: "Apollo PLT1 Hotspot"
 

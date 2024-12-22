@@ -19,6 +19,8 @@ jobs:
           - Integrations/ESPHome/PLT-1_BLE.yaml
           - Integrations/ESPHome/PLT-1B_BLE.yaml
           - Integrations/ESPHome/PLT-1B.yaml
+          - Integrations/ESPHome/PLT-1B_Minimal.yaml
+          - Integrations/ESPHome/PLT-1_Minimal.yaml
         esphome-version:
           - stable
           - beta
