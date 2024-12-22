@@ -1,10 +1,11 @@
 substitutions:
-  version: "24.12.7.1"
+  version: "24.12.21.1"
 
 esp32:
   board: esp32-c3-devkitm-1
   framework:
     type: esp-idf
+
 
 api:
   services:
@@ -68,8 +69,6 @@ globals:
 
 captive_portal:
 
-web_server:
-  port: 80
 
 i2c:
   sda: GPIO1

@@ -39,7 +39,7 @@ esphome:
     - switch.turn_off: accessory_power
 
 dashboard_import:
-  package_import_url: github://ApolloAutomation/PLT-1/Integrations/ESPHome/PLT-1B.yaml
+  package_import_url: github://ApolloAutomation/PLT-1/Integrations/ESPHome/PLT-1B_Minimal.yaml
   import_full_config: false
 
 improv_serial:
@@ -57,6 +57,9 @@ http_request:
   verify_ssl: true
 
 safe_mode:
+
+web_server:
+  port: 80
 
 update:
   - platform: http_request

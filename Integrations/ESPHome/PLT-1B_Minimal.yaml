@@ -1,21 +1,21 @@
 esphome:
-  name: "apollo-plt-1"
-  friendly_name: Apollo PLT-1
-  comment: Apollo PLT-1
+  name: "apollo-plt-1b-minimal"
+  friendly_name: Apollo PLT-1B Minimal
+  comment: Apollo PLT-1B Minimal
   name_add_mac_suffix: true
   platformio_options:
     board_build.flash_mode: dio
 
   project:
-    name: "ApolloAutomation.PLT-1"
+    name: "ApolloAutomation.PLT-1B_Minimal"
     version: "${version}"
 
   min_version: 2024.2.0
   on_boot:
-    - priority: 800.0
+    - priority: 999.0
       then:
         - lambda: |-
-            id(deep_sleep_1).set_sleep_duration(id(deep_sleep_sleep_duration).state * 60 * 1000);
+            id(deep_sleep_1).set_sleep_duration(id(deep_sleep_sleep_duration).state * 60 * 60 * 1000);
             id(deep_sleep_1).set_run_duration(90 * 1000);
         - if:
             condition:
@@ -25,7 +25,7 @@ esphome:
             then:
               - lambda: |- 
                   ESP_LOGW("Apollo", "Preventing Deep Sleep Due To OTA On Boot");
-                  id(deep_sleep_1).prevent_deep_sleep(); 
+                  id(deep_sleep_1).prevent_deep_sleep();
     - priority: -10
       then:
         - if:
@@ -36,48 +36,27 @@ esphome:
       
   on_shutdown:
     - light.turn_off: rgb_light
+    - switch.turn_off: accessory_power
 
 dashboard_import:
-  package_import_url: github://ApolloAutomation/PLT-1/Integrations/ESPHome/PLT-1_Minimal.yaml
+  package_import_url: github://ApolloAutomation/PLT-1/Integrations/ESPHome/PLT-1B_Minimal.yaml
   import_full_config: false
 
 improv_serial:
 
-esp32_improv:
-  authorizer: none
+ota:
+  - platform: esphome
+    id: ota_esphome
 
 web_server:
   port: 80
 
-ota:
-  - platform: esphome
-    id: ota_esphome
-  - platform: http_request
-    id: ota_managed
-
-http_request:
-  verify_ssl: true
-
-safe_mode:
-
-update:
-  - platform: http_request
-    id: firmware_update
-    name: Firmware Update
-    source: https://apolloautomation.github.io/PLT-1/firmware/manifest.json
-
 wifi:
-  on_connect:
-    - delay: 5s
-    - ble.disable:
-  on_disconnect:
-    - ble.enable:
   ap:
-    ssid: "Apollo PLT1 Hotspot"
+    ssid: "Apollo PLT1B Hotspot"
 
 logger:
 
 packages:
   core: !include Core.yaml
-  nonbattery: !include NonBattery.yaml
-
+  battery: !include Battery.yaml
