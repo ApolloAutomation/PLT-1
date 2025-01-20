@@ -234,6 +234,7 @@ sensor:
       filters:
         - lambda: return x - id(aht_humidity_offset).state;
     update_interval: 60s
+    setup_priority: -100 # LATE
 
   - platform: adc
     pin: GPIO4
