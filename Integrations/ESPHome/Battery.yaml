@@ -27,7 +27,7 @@ switch:
     name: "Accessory Power"
     id: accessory_power
     restore_mode: ALWAYS_ON
-    setup_priority: 1100
+    setup_priority: 5000
     entity_category: CONFIG
 number:
   
