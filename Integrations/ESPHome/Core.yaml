@@ -1,5 +1,5 @@
 substitutions:
-  version: "24.12.21.1"
+  version: "25.2.19.1"
 
 esp32:
   board: esp32-c3-devkitm-1
@@ -283,7 +283,6 @@ light:
     id: rgb_light
     name: "RGB Light"
     pin: GPIO3
-    rmt_channel: 0
     default_transition_length: 0s
     chipset: WS2812
     num_leds: 1
