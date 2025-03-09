@@ -1,5 +1,5 @@
 substitutions:
-  version: "25.2.19.1"
+  version: "25.3.9.1"
 
 esp32:
   board: esp32-c3-devkitm-1
@@ -219,6 +219,17 @@ sensor:
     device_class: temperature
     id: soil_temperature
     icon: mdi:thermometer
+    filters:
+      - lambda: |-
+          if (isnan(x)) {
+            return NAN;
+          }
+
+          if (x == 85.0) {
+              return NAN;
+          }
+
+          return x;
     
   - platform: aht10
     id: aht_20
