@@ -41,14 +41,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v4.1.7
+        uses: actions/checkout@v4.2.2
       - name: Build
         uses: actions/jekyll-build-pages@v1.0.13
         with:
           source: ./static
           destination: ./output
       - name: Upload
-        uses: actions/upload-artifact@v4.3.6
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: site
           path: output
@@ -67,11 +67,11 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/download-artifact@v4.1.8
+      - uses: actions/download-artifact@v4.3.0
         with:
           name: firmware
           path: firmware
-      - uses: actions/download-artifact@v4.1.8
+      - uses: actions/download-artifact@v4.3.0
         with:
           name: firmware-b
           path: firmware-b
@@ -85,7 +85,7 @@ jobs:
           mkdir -p output/firmware-b
           cp -r firmware-b/${{ needs.build-firmware.outputs.version }}/* output/firmware-b/
 
-      - uses: actions/download-artifact@v4.1.8
+      - uses: actions/download-artifact@v4.3.0
         with:
           name: site
           path: output
