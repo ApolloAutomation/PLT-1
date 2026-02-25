@@ -355,7 +355,7 @@ text_sensor:
   - platform: wifi_info
     ip_address:
       name: "IP Address"
-      id: wifi_ip
+      entity_category: "diagnostic"
 
 script:
   - id: statusCheck
