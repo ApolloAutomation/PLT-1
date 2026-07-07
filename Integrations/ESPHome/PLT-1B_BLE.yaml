@@ -1,3 +1,6 @@
+substitutions:
+  variant_slug: "-b"
+
 esphome:
   name: "apollo-plt-1bble"
   friendly_name: Apollo PLT-1BBLE
@@ -39,6 +42,17 @@ dashboard_import:
 ota:
   - platform: esphome
     id: ota_esphome
+  - platform: http_request
+    id: ota_managed
+
+http_request:
+  verify_ssl: true
+
+update:
+  - platform: http_request
+    id: update_http_request
+    name: Firmware Update
+    source: ${stable_manifest_base}/firmware${variant_slug}/manifest.json
 
 safe_mode:
 
@@ -50,6 +64,8 @@ esp32_ble_tracker:
     active: false
 
 wifi:
+  on_connect:
+    - component.update: update_http_request
   ap:
     ssid: "Apollo PLT1B Hotspot"
 

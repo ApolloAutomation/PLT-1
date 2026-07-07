@@ -1,3 +1,6 @@
+substitutions:
+  variant_slug: "-b"
+
 esphome:
   name: "apollo-plt-1b"
   friendly_name: Apollo PLT-1B
@@ -66,13 +69,13 @@ web_server:
 
 update:
   - platform: http_request
-    id: firmware_update
+    id: update_http_request
     name: Firmware Update
     source: https://apolloautomation.github.io/PLT-1/firmware-b/manifest.json
 
 wifi:
   on_connect:
-    - component.update: firmware_update
+    - component.update: update_http_request
   ap:
     ssid: "Apollo PLT1B Hotspot"
 
