@@ -16,7 +16,7 @@ on:
 
 jobs:
   build-and-publish:
-    uses: ApolloAutomation/Workflows/.github/workflows/build.yml@main
+    uses: ApolloAutomation/Workflows/.github/workflows/build.yml@430d90dc695c6f7d1075c4e4a0df4b13a6496252 # main 2026-07-23
     permissions:
       contents: write
       pages: write
@@ -24,10 +24,16 @@ jobs:
       pull-requests: write
     with:
       device-name: plt-1
+      # The Minimal yamls are the end-user images served at firmware/ and
+      # firmware-b/ (OTA updates and dashboard adoption). The improv images
+      # move to *-factory/ and are only used for first flashes via the web
+      # installer.
       yaml-files: |
+        Integrations/ESPHome/PLT-1_Minimal.yaml
+        Integrations/ESPHome/PLT-1B_Minimal.yaml
         Integrations/ESPHome/PLT-1.yaml
         Integrations/ESPHome/PLT-1B.yaml
-      firmware-names: "1:firmware,1B:firmware-b"
+      firmware-names: "1_Minimal:firmware,1B_Minimal:firmware-b,1:firmware-factory,1B:firmware-b-factory"
       core-yaml-path: Integrations/ESPHome/Core.yaml
       esphome-version: stable
       # Bypass check if manually triggered with bypass option
