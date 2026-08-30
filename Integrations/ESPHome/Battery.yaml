@@ -1,6 +1,29 @@
 external_components:
   - source: github://ApolloAutomation/esphome-battery-component
     components: [max17048] #Forked OptionZero
+  - source: github://bharvey88/esphome@aht10-init-retry
+    components: [aht10] #Init retry for slow AHT20 power-on, pending upstream
+    refresh: 0s
+
+esphome:
+  on_boot:
+    # AHT20 rescue: if the sensor is still failing init 2s in (the aht10
+    # component retries for 5s), power-cycle the accessory rail so the chip
+    # gets a clean power-on reset. Battery units never fully lose power, so
+    # a wedged AHT20 otherwise stays wedged until the battery is pulled.
+    - priority: -100.0
+      then:
+        - delay: 2s
+        - if:
+            condition:
+              lambda: 'return id(aht_20).status_has_warning();'
+            then:
+              - logger.log:
+                  level: WARN
+                  format: "AHT20 not responding, power-cycling accessory rail"
+              - switch.turn_off: accessory_power
+              - delay: 500ms
+              - switch.turn_on: accessory_power
 
 deep_sleep:
   id: deep_sleep_1
