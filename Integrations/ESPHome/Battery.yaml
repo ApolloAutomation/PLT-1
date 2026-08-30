@@ -1,8 +1,8 @@
 external_components:
   - source: github://ApolloAutomation/esphome-battery-component
     components: [max17048] #Forked OptionZero
-  - source: github://bharvey88/esphome@aht10-init-retry
-    components: [aht10] #Init retry for slow AHT20 power-on, pending upstream
+  - source: github://bharvey88/esphome@aht10-init-retry-wedgetest
+    components: [aht10] #TEMPORARY wedge-simulation branch for rescue testing
     refresh: 0s
 
 esphome:
