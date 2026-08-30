@@ -10,7 +10,7 @@ esphome:
     name: "ApolloAutomation.PLT-1BBLE"
     version: "${version}"
 
-  min_version: 2025.11.0
+  min_version: 2026.8.0
   # List form so package merging concatenates with Core.yaml's on_boot
   # entries (mapping form would replace Core's whole list instead).
   on_boot:
