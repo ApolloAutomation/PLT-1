@@ -51,6 +51,12 @@ number:
             id(deep_sleep_1).set_sleep_duration(x * 60 * 60 * 1000);
 
 script:
+  # Boot button held 3-10 s: turn Prevent Sleep on and stay awake.
+  - id: bootButtonHold
+    then:
+      - switch.turn_on: prevent_sleep
+      - lambda: |-
+          id(deep_sleep_1).prevent_deep_sleep();
   - id: reportAllValues
     then:
       - component.update: soil_temperature

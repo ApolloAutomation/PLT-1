@@ -7,7 +7,7 @@ esphome:
     name: "ApolloAutomation.PLT-1"
     version: "${version}"
 
-  min_version: 2026.8.0
+  min_version: 2026.10.0
   on_boot:
     - priority: 800.0
       then:
@@ -45,7 +45,7 @@ dashboard_import:
 
 improv_serial:
 
-esp32_improv:
+improv_ble:
   authorizer: none
 
 web_server:
@@ -58,16 +58,13 @@ ota:
   - platform: http_request
     id: ota_managed
 
-http_request:
-  verify_ssl: true
-
 safe_mode:
 
 update:
   - platform: http_request
     id: firmware_update
     name: Firmware Update
-    source: https://apolloautomation.github.io/PLT-1/firmware/manifest.json
+    source: ${ota_stable_manifest}
 
 wifi:
   on_connect:
@@ -79,5 +76,6 @@ logger:
 
 packages:
   core: !include Core.yaml
+  firmware_channel: !include Firmware_Channel.yaml
   nonbattery: !include NonBattery.yaml
 

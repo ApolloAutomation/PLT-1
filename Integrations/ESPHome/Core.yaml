@@ -1,5 +1,28 @@
 substitutions:
-  version: "26.8.27.1"
+  version: "26.11.15.1"
+
+  # Bluetooth Proxy switch state on a device with no stored preference yet
+  # (first boot after this switch was added, or after a factory reset). Off by
+  # default; the _BLE variants override this to ON so devices that proxied
+  # unconditionally keep proxying instead of going quiet after an update.
+  bluetooth_proxy_restore_mode: RESTORE_DEFAULT_OFF
+
+esphome:
+  # List form so package merging concatenates with each variant's own on_boot
+  # entries (mapping form would be replaced by the variant's block instead).
+  on_boot:
+    # Re-apply the Bluetooth Proxy switch after all components set up, so BLE
+    # scanning matches the switch state restored from flash.
+    - priority: -300
+      then:
+        - if:
+            condition:
+              switch.is_on: bluetooth_proxy_switch
+            then:
+              - esp32_ble_tracker.start_scan:
+                  continuous: true
+            else:
+              - esp32_ble_tracker.stop_scan:
 
 esp32:
   variant: esp32c3
@@ -10,7 +33,19 @@ esp32:
        assertion_level: SILENT
        enable_lwip_assert: false
 
+esp32_ble_tracker:
+  id: ble_tracker
+  scan_parameters:
+    continuous: true
+
+bluetooth_proxy:
+
+wifi:
+  # Keeps today's no-reboot on lost Wi-Fi; 2026.11 drops the AP exemption
+  reboot_timeout: 0s
+
 api:
+  encryption:
   actions:
     - action: play_buzzer
       variables:
@@ -188,10 +223,8 @@ binary_sensor:
               id(factory_reset_switch).turn_on();
             }
             else if (millis() - id(button_press_timestamp) >= 3000) {
-              //Turn Prevent Sleep On
-              id(prevent_sleep).turn_on();
-              //Prevent Sleep
-              id(deep_sleep_1).prevent_deep_sleep();
+              // Battery: Prevent Sleep On. Non-battery: nothing.
+              id(bootButtonHold).execute();
             }
             else {
               // StatusCheck
@@ -367,6 +400,18 @@ switch:
             then:
               - lambda: |- 
                   id(deep_sleep_1).allow_deep_sleep();
+  - platform: template
+    name: "Bluetooth Proxy"
+    id: bluetooth_proxy_switch
+    icon: mdi:bluetooth
+    entity_category: "config"
+    restore_mode: ${bluetooth_proxy_restore_mode}
+    optimistic: true
+    on_turn_on:
+      - esp32_ble_tracker.start_scan:
+          continuous: true
+    on_turn_off:
+      - esp32_ble_tracker.stop_scan:
 
 
 text_sensor:
