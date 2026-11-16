@@ -1,3 +1,7 @@
+substitutions:
+  ota_stable_manifest: "${stable_manifest_base}/firmware-b/manifest.json"
+  ota_beta_manifest: "${beta_manifest_base}/manifest-b.json"
+
 esphome:
   name: "apollo-plt-1b"
   friendly_name: Apollo PLT-1B
@@ -7,7 +11,7 @@ esphome:
     name: "ApolloAutomation.PLT-1B"
     version: "${version}"
 
-  min_version: 2026.8.0
+  min_version: 2026.10.0
   on_boot:
     - priority: 999.0
       then:
@@ -46,7 +50,7 @@ dashboard_import:
 
 improv_serial:
 
-esp32_improv:
+improv_ble:
   authorizer: none
 
 ota:
@@ -54,9 +58,6 @@ ota:
     id: ota_esphome
   - platform: http_request
     id: ota_managed
-
-http_request:
-  verify_ssl: true
 
 safe_mode:
 
@@ -68,7 +69,7 @@ update:
   - platform: http_request
     id: firmware_update
     name: Firmware Update
-    source: https://apolloautomation.github.io/PLT-1/firmware-b/manifest.json
+    source: ${ota_stable_manifest}
 
 wifi:
   on_connect:
@@ -80,4 +81,5 @@ logger:
 
 packages:
   core: !include Core.yaml
+  firmware_channel: !include Firmware_Channel.yaml
   battery: !include Battery.yaml

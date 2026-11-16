@@ -24,6 +24,10 @@ number:
             id(deep_sleep_1).set_sleep_duration(x * 60 * 1000);
 
 script:
+  # Boot button held 3-10 s: no action on non-battery devices.
+  - id: bootButtonHold
+    then:
+      - logger.log: "Boot button held 3-10 s: no action on non-battery devices"
   - id: reportAllValues
     then:
       - component.update: soil_temperature
