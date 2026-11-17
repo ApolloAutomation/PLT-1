@@ -1,5 +1,5 @@
 substitutions:
-  version: "26.11.16.1"
+  version: "26.11.17.1"
 
   # Bluetooth Proxy switch state on a device with no stored preference yet
   # (first boot after this switch was added, or after a factory reset). Off by
