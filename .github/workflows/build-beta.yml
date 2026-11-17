@@ -1,0 +1,31 @@
+name: Build and Publish Beta
+
+# Builds the beta branch and publishes it to the rolling "beta-fw" pre-release.
+# The keys must match the ota_beta_manifest URLs in the firmware YAML:
+# manifest-standard.json (PLT-1) and manifest-b.json (PLT-1B).
+
+on:
+  push:
+    branches: [beta]
+    paths:
+      - 'Integrations/ESPHome/**'
+      # A push that only changes this file must rebuild too
+      - '.github/workflows/build-beta.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-beta-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  beta:
+    permissions:
+      contents: write
+    uses: ApolloAutomation/Workflows/.github/workflows/build-beta.yml@main
+    with:
+      variants: >-
+        [{"key": "standard", "yaml": "Integrations/ESPHome/PLT-1.yaml",  "name": "firmware-standard"},
+         {"key": "b",        "yaml": "Integrations/ESPHome/PLT-1B.yaml", "name": "firmware-b-beta"}]
